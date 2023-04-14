@@ -35,15 +35,17 @@ public class SeqBackgroundService : BackgroundService
 
                 try
                 {
-                    
-                    var result = await connection.Data.QueryAsync(queryDefinition.Query, signal: SignalExpressionPart.Signal(queryDefinition.Signal) );
+                    var result = await connection.Data.QueryAsync(queryDefinition.Query, signal: SignalExpressionPart.Signal(queryDefinition.Signal));
+
                     for(int e = 0; e < result.Rows.Length; e++)
                     {
                         var key = result.Rows[e][0].ToString() ?? "";
                         var value = Convert.ToInt32 (result.Rows[e][1]);
                         SeqObservableMetrics.MetricResults.AddOrUpdate(
-                            queryDefinition.MetricName, (_) => new Dictionary<string, int>(new [] { new KeyValuePair<string, int>(key, value)}), (_, d) => 
-                            { 
+                            queryDefinition.MetricName, 
+                            (_) => new Dictionary<string, int>{{key, value}}, 
+                            (_, d) =>
+                            {
                                 d[key!] = value;
                                 return d;
                             });

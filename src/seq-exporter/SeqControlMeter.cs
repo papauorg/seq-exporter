@@ -3,7 +3,7 @@ using System.Diagnostics.Metrics;
 
 namespace SeqExporter.Metrics;
 
-internal class SeqControlMeter
+public class SeqControlMeter
 {
     public const string NAME = "SeqExporter.SeqControlMeter";
 
@@ -24,9 +24,8 @@ internal class SeqControlMeter
         }
     }
 
-    private static IEnumerable<Measurement<int>> ToMeasurements(ConcurrentDictionary<string, Dictionary<string, int>> values, string metricName, string tagName)
+    internal static IEnumerable<Measurement<int>> ToMeasurements(ConcurrentDictionary<string, Dictionary<string, int>> values, string metricName, string tagName)
     {
-
         if (!values.Any() || !values.ContainsKey(metricName))
             return Array.Empty<Measurement<int>>();
 

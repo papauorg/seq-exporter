@@ -35,5 +35,4 @@ seqexporter_count_by_level{level="Info"} 1 1675784613469
 ```
 
 ## Limitations
-- Currently only unauthenticated calls to ServiceControl are supported.
 - Authentication for the provided metrics endpoint is not implemented.

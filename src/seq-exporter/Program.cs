@@ -53,3 +53,4 @@ app.UseOpenTelemetryPrometheusScrapingEndpoint();
 app.UseAuthorization();
 
 app.Run();
+
