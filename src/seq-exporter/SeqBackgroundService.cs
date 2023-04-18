@@ -1,16 +1,15 @@
 using Seq.Api;
+using Seq.Api.Model.Data;
 using Seq.Api.Model.Signals;
 
 namespace SeqExporter;
 
 public class SeqBackgroundService : BackgroundService
 {
-    public SeqObservableMetrics SeqObservableMetrics { get; }
-
-    public SeqOptions SeqOptions { get; }
-
-    public IEnumerable<QueryDefinition> QueryDefinitions { get; }
-    public ILogger<SeqBackgroundService> Logger { get; }
+    private SeqObservableMetrics SeqObservableMetrics { get; }
+    private SeqOptions SeqOptions { get; }
+    private IEnumerable<QueryDefinition> QueryDefinitions { get; }
+    private ILogger<SeqBackgroundService> Logger { get; }
 
     public SeqBackgroundService(SeqObservableMetrics seqObservableMetrics, SeqOptions seqOptions, IEnumerable<QueryDefinition> queryDefinitions, ILogger<SeqBackgroundService> logger)
     
@@ -26,7 +25,7 @@ public class SeqBackgroundService : BackgroundService
         var timer = new PeriodicTimer(SeqOptions.RequestInterval);
         do
         {
-            Logger.LogInformation("Attemting to retrieve queries from Seq Server");
+            Logger.LogInformation("Attempting to retrieve queries from Seq Server");
             var connection = new SeqConnection (SeqOptions.BaseUrl, SeqOptions.ApiKey);
 
             foreach (var queryDefinition in QueryDefinitions)
@@ -37,16 +36,16 @@ public class SeqBackgroundService : BackgroundService
                 {
                     var result = await connection.Data.QueryAsync(queryDefinition.Query, signal: SignalExpressionPart.Signal(queryDefinition.Signal));
 
-                    for(int e = 0; e < result.Rows.Length; e++)
+                    var convertedValues = ConvertValuePairs(result);
+
+                    foreach (var valuePair in convertedValues)
                     {
-                        var key = result.Rows[e][0].ToString() ?? "";
-                        var value = Convert.ToInt32 (result.Rows[e][1]);
                         SeqObservableMetrics.MetricResults.AddOrUpdate(
-                            queryDefinition.MetricName, 
-                            (_) => new Dictionary<string, int>{{key, value}}, 
+                            queryDefinition.MetricName,
+                            (_) => new Dictionary<CompositeMetricKey, int> { { valuePair.Key, valuePair.Value } },
                             (_, d) =>
                             {
-                                d[key!] = value;
+                                d[valuePair.Key!] = valuePair.Value;
                                 return d;
                             });
                     }
@@ -57,5 +56,24 @@ public class SeqBackgroundService : BackgroundService
                 }
             }
         } while (await timer.WaitForNextTickAsync(stoppingToken));
+    }
+
+    public static IEnumerable<KeyValuePair<CompositeMetricKey, int>> ConvertValuePairs(QueryResultPart result)
+    {
+        foreach (var row in result.Rows)
+        {
+            //Get all columns except for count column
+            var columnIndexes = Enumerable.Range(0, result.Columns.Length - 1);
+
+            var compositeMetricKeys = columnIndexes
+                .Select(x => new KeyValuePair<string, object>(result.Columns[x], row[x]));
+
+            var compositeMetricKey = new CompositeMetricKey(compositeMetricKeys);
+
+            //Assuming the count column is always last in the list
+            var value = Convert.ToInt32(row[result.Columns.Length - 1]);
+
+            yield return new KeyValuePair<CompositeMetricKey, int>(compositeMetricKey, value);
+        }
     }
 }

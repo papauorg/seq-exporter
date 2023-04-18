@@ -1,7 +1,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.Metrics;
 
-namespace SeqExporter.Metrics;
+namespace SeqExporter;
 
 public class SeqControlMeter
 {
@@ -9,7 +9,7 @@ public class SeqControlMeter
 
     private Meter Meter { get; }
     private IEnumerable<QueryDefinition> Queries { get; }
-    public SeqObservableMetrics SeqObservableMetrics { get; }
+    private SeqObservableMetrics SeqObservableMetrics { get; }
 
     public SeqControlMeter(SeqObservableMetrics seqObservableMetrics, IEnumerable<QueryDefinition> queries)
     {
@@ -24,13 +24,13 @@ public class SeqControlMeter
         }
     }
 
-    internal static IEnumerable<Measurement<int>> ToMeasurements(ConcurrentDictionary<string, Dictionary<string, int>> values, string metricName, string tagName)
+    internal static IEnumerable<Measurement<int>> ToMeasurements(ConcurrentDictionary<string, Dictionary<CompositeMetricKey, int>> values, string metricName, string tagName)
     {
         if (!values.Any() || !values.ContainsKey(metricName))
             return Array.Empty<Measurement<int>>();
 
         return values[metricName]
-            .Select(s => new Measurement<int>(s.Value, new KeyValuePair<string, object?>[] {new(tagName, s.Key)}));
+            .Select(s => new Measurement<int>(s.Value, s.Key));
     }
    
 }

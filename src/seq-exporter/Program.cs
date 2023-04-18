@@ -1,7 +1,5 @@
 using OpenTelemetry.Metrics;
-
 using SeqExporter;
-using SeqExporter.Metrics;
 
 using Serilog;
 
