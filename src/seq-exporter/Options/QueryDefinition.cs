@@ -1,3 +1,5 @@
+namespace SeqExporter;
+
 public record QueryDefinition
 {
     public string Query { get; init; } = "";
@@ -5,5 +7,4 @@ public record QueryDefinition
     public string MetricName { get; init; } = "";
     public string MetricUnit { get; init; } = "";
     public string MetricDescription { get; init; } = "";
-    public string LabelName { get; init; } = "";
 }

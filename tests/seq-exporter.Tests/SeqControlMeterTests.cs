@@ -1,12 +1,15 @@
 using System.Collections.Concurrent;
+
 using FluentAssertions;
+
 using NUnit.Framework;
+
 using Seq.Api.Model.Data;
 
 namespace SeqExporter.Tests;
 
 
-public class SeqControlMeterTests 
+public class SeqControlMeterTests
 {
 
     public class Constructor : SeqControlMeterTests
@@ -20,7 +23,7 @@ public class SeqControlMeterTests
                 {CompositeMetricKey.FromKeyValue("Level", "Info"), 3315},
                 {CompositeMetricKey.FromKeyValue("Level", "Error"), 6},
             };
-            var queries = new [] { new QueryDefinition { MetricName = "metric_test", LabelName = "level"} };
+            var queries = new[] { new QueryDefinition { MetricName = "metric_test", LabelName = "level" } };
             Action create = () => new SeqControlMeter(seqResults, queries);
 
             create.Should().NotThrow();

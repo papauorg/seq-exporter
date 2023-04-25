@@ -12,7 +12,7 @@ public class SeqBackgroundService : BackgroundService
     private ILogger<SeqBackgroundService> Logger { get; }
 
     public SeqBackgroundService(SeqObservableMetrics seqObservableMetrics, SeqOptions seqOptions, IEnumerable<QueryDefinition> queryDefinitions, ILogger<SeqBackgroundService> logger)
-    
+
     {
         SeqObservableMetrics = seqObservableMetrics ?? throw new ArgumentNullException(nameof(seqObservableMetrics));
         SeqOptions = seqOptions ?? throw new ArgumentNullException(nameof(seqOptions));
@@ -26,7 +26,7 @@ public class SeqBackgroundService : BackgroundService
         do
         {
             Logger.LogInformation("Attempting to retrieve queries from Seq Server");
-            var connection = new SeqConnection (SeqOptions.BaseUrl, SeqOptions.ApiKey);
+            var connection = new SeqConnection(SeqOptions.BaseUrl, SeqOptions.ApiKey);
 
             foreach (var queryDefinition in QueryDefinitions)
             {
