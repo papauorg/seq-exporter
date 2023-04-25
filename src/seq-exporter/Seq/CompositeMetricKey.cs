@@ -8,6 +8,6 @@ public class CompositeMetricKey : List<KeyValuePair<string, object>>
 
     public static CompositeMetricKey FromKeyValue(string key, object value)
     {
-        return new CompositeMetricKey { new (key, value) };
+        return new CompositeMetricKey { new(key, value) };
     }
 }

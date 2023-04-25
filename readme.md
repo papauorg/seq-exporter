@@ -11,14 +11,12 @@ For the seq-exporter to provide metrics it is necessary to configure the queries
       "Signal": "signal-1,signal-2",
       "MetricName": "seqexporter_count_by_level", 
       "MetricUnit": "messages",
-      "MetricDescription": "Shows the amount of incidents depending on their level.",
-      "LabelName": "level"
+      "MetricDescription": "Shows the amount of incidents depending on their level."
     }
 ```
 
 You can combine Signals and Queries the same way as in the Seq Events overview. Multiple Signals should be separated by `,`.
-
-The `LabelName` can be used to set different labels for the same metric based on multiple result rows of the query.
+Columns that are returned by queries will be mapped to labels in the resulting metrics.
 
 ## Metrics endpoint
 The default metrics endpoint is available via `/metrics` and contains the results of the queries if any.
