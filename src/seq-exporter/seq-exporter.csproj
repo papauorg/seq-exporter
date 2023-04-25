@@ -15,4 +15,12 @@
     <PackageReference Include="Serilog.AspNetCore" Version="6.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="InstallAsWindowsService.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="UninstallWindowsService.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>
