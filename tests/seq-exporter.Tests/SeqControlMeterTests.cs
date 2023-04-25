@@ -23,7 +23,7 @@ public class SeqControlMeterTests
                 {CompositeMetricKey.FromKeyValue("Level", "Info"), 3315},
                 {CompositeMetricKey.FromKeyValue("Level", "Error"), 6},
             };
-            var queries = new[] { new QueryDefinition { MetricName = "metric_test", LabelName = "level" } };
+            var queries = new[] { new QueryDefinition { MetricName = "metric_test" } };
             Action create = () => new SeqControlMeter(seqResults, queries);
 
             create.Should().NotThrow();
@@ -43,7 +43,7 @@ public class SeqControlMeterTests
                 {CompositeMetricKey.FromKeyValue("Level", "Error"), 6},
             };
 
-            var result = SeqControlMeter.ToMeasurements(seqResults, "metric_test", "level");
+            var result = SeqControlMeter.ToMeasurements(seqResults, "metric_test");
 
             result.Should().HaveCount(3);
         }
