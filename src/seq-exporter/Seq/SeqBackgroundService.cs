@@ -60,13 +60,13 @@ public class SeqBackgroundService : BackgroundService
 
     public static IEnumerable<KeyValuePair<CompositeMetricKey, int>> ConvertValuePairs(QueryResultPart result)
     {
+        //Get all columns except for count column
+        var columnIndexes = Enumerable.Range(0, result.Columns.Length - 1);
+
         foreach (var row in result.Rows)
         {
-            //Get all columns except for count column
-            var columnIndexes = Enumerable.Range(0, result.Columns.Length - 1);
-
             var compositeMetricKeys = columnIndexes
-                .Select(x => new KeyValuePair<string, object>(result.Columns[x], row[x]));
+                .Select(x => new KeyValuePair<string, object>(result.Columns[x], MaxLabelValue(row[x])));
 
             var compositeMetricKey = new CompositeMetricKey(compositeMetricKeys);
 
@@ -75,5 +75,20 @@ public class SeqBackgroundService : BackgroundService
 
             yield return new KeyValuePair<CompositeMetricKey, int>(compositeMetricKey, value);
         }
+    }
+
+    private static object MaxLabelValue(object value)
+    {
+        if (value is string v)
+        {
+            v = v.Trim().Substring(0, Math.Min(200, v.Length)); // cut to max length
+            var indexOfNewline = v.IndexOfAny(new [] {'\r', '\n'});
+            if (indexOfNewline >= 0)
+                v = v.Substring(0, indexOfNewline);
+
+            return v;
+        }
+
+        return value;
     }
 }
