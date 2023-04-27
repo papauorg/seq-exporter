@@ -81,7 +81,8 @@ public class SeqBackgroundService : BackgroundService
     {
         if (value is string v)
         {
-            v = v.Trim().Substring(0, Math.Min(200, v.Length)); // cut to max length
+            v = v.Trim();
+            v = v.Substring(0, Math.Min(200, v.Length)); // cut to max length
             var indexOfNewline = v.IndexOfAny(new [] {'\r', '\n'});
             if (indexOfNewline >= 0)
                 v = v.Substring(0, indexOfNewline);

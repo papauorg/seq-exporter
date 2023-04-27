@@ -60,7 +60,8 @@ public class SeqControlMeterTests
                 new object[] { "123456", "IdentityProvider", "Documents", 5 },
                 new object[] { "5387191", "MainApplication", "Mails", 8 },
                 new object[] { "9845651", "SupportingApplication", "Tasks", 12 },
-                new object[] { "4545454", "Some\r\nNewline\r\nContext", "VeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongApplication", 5}
+                new object[] { "4545454", "Some\r\nNewline\r\nContext", "VeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongApplication", 5},
+                new object[] { "", null!, "  t", 1}
             };
 
             var expectedList = new List<KeyValuePair<CompositeMetricKey, int>> {
@@ -84,6 +85,11 @@ public class SeqControlMeterTests
                     new KeyValuePair<string, object>("SourceContext", "Some"),
                     new KeyValuePair<string, object>("Application", "VeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVery"),
                 }), 5),
+                new KeyValuePair<CompositeMetricKey, int>(new CompositeMetricKey(new [] {
+                    new KeyValuePair<string, object>("EventId", ""),
+                    new KeyValuePair<string, object>("SourceContext", null!),
+                    new KeyValuePair<string, object>("Application", "t"),
+                }), 1),
             };
 
             var actualList = SeqBackgroundService.ConvertValuePairs(result).ToList();
