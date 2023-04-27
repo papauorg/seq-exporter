@@ -57,27 +57,33 @@ public class SeqControlMeterTests
             var result = new QueryResultPart();
             result.Columns = new[] { "EventId", "SourceContext", "Application", "Count" };
             result.Rows = new object[][] {
-                new object[] { "123456", "IdentityProvider", "DMS.NET", 5 },
-                new object[] { "5387191", "HoloGraph", "SMS.NET", 8 },
-                new object[] { "9845651", "DocumentService", "LAS.NET", 12 },
+                new object[] { "123456", "IdentityProvider", "Documents", 5 },
+                new object[] { "5387191", "MainApplication", "Mails", 8 },
+                new object[] { "9845651", "SupportingApplication", "Tasks", 12 },
+                new object[] { "4545454", "Some\r\nNewline\r\nContext", "VeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongApplication", 5}
             };
 
             var expectedList = new List<KeyValuePair<CompositeMetricKey, int>> {
                 new KeyValuePair<CompositeMetricKey, int>(new CompositeMetricKey(new [] {
                     new KeyValuePair<string, object>("EventId", "123456"),
                     new KeyValuePair<string, object>("SourceContext", "IdentityProvider"),
-                    new KeyValuePair<string, object>("Application", "DMS.NET"),
+                    new KeyValuePair<string, object>("Application", "Documents"),
                 }), 5),
                 new KeyValuePair<CompositeMetricKey, int>(new CompositeMetricKey(new [] {
                     new KeyValuePair<string, object>("EventId", "5387191"),
-                    new KeyValuePair<string, object>("SourceContext", "HoloGraph"),
-                    new KeyValuePair<string, object>("Application", "SMS.NET"),
+                    new KeyValuePair<string, object>("SourceContext", "MainApplication"),
+                    new KeyValuePair<string, object>("Application", "Mails"),
                 }), 8),
                 new KeyValuePair<CompositeMetricKey, int>(new CompositeMetricKey(new [] {
                     new KeyValuePair<string, object>("EventId", "9845651"),
-                    new KeyValuePair<string, object>("SourceContext", "DocumentService"),
-                    new KeyValuePair<string, object>("Application", "LAS.NET"),
+                    new KeyValuePair<string, object>("SourceContext", "SupportingApplication"),
+                    new KeyValuePair<string, object>("Application", "Tasks"),
                 }), 12),
+                new KeyValuePair<CompositeMetricKey, int>(new CompositeMetricKey(new [] {
+                    new KeyValuePair<string, object>("EventId", "4545454"),
+                    new KeyValuePair<string, object>("SourceContext", "Some"),
+                    new KeyValuePair<string, object>("Application", "VeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVery"),
+                }), 5),
             };
 
             var actualList = SeqBackgroundService.ConvertValuePairs(result).ToList();
@@ -91,9 +97,9 @@ public class SeqControlMeterTests
             var result = new QueryResultPart();
             result.Columns = new[] { "EventId", "Count", "SourceContext", "Application" };
             result.Rows = new object[][] {
-                new object[] { "123456", 5, "IdentityProvider", "DMS.NET" },
-                new object[] { "5387191", 8, "HoloGraph", "SMS.NET" },
-                new object[] { "9845651", 12,"DocumentService", "LAS.NET" },
+                new object[] { "123456", 5, "IdentityProvider", "Documents" },
+                new object[] { "5387191", 8, "MainApplication", "Mails" },
+                new object[] { "9845651", 12,"SupportingApplications", "Other" },
             };
 
             Assert.Throws<FormatException>(() => SeqBackgroundService.ConvertValuePairs(result).ToList());
