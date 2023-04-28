@@ -11,6 +11,7 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 builder.Host.UseSerilog();
+builder.Host.UseWindowsService();
 
 builder.Services.AddRazorPages();
 
