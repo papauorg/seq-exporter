@@ -20,17 +20,29 @@ public class SeqControlMeter
 
         foreach (var query in Queries)
         {
-            Meter.CreateObservableGauge(query.MetricName, () => ToMeasurements(SeqObservableMetrics.MetricResults, query.MetricName), query.MetricUnit, query.MetricDescription);
+            Meter.CreateObservableGauge(query.MetricName, () => ToMeasurements(SeqObservableMetrics.MetricResults, query), query.MetricUnit, query.MetricDescription);
         }
     }
 
-    internal static IEnumerable<Measurement<int>> ToMeasurements(ConcurrentDictionary<string, Dictionary<CompositeMetricKey, int>> values, string metricName)
+    internal static IEnumerable<Measurement<int>> ToMeasurements(ConcurrentDictionary<string, Dictionary<CompositeMetricKey, int>> values, QueryDefinition query)
     {
+        var metricName = query.MetricName;
+
         if (!values.Any() || !values.ContainsKey(metricName))
             return Array.Empty<Measurement<int>>();
 
-        return values[metricName]
-            .Select(s => new Measurement<int>(s.Value, s.Key!));
-    }
+        var additionalLabels = query.AdditionalLabels.Select(l => new KeyValuePair<string, object?>(l.Key, l.Value));
 
+        return values[metricName]
+            .Select(s =>
+            {
+                var tags = new List<KeyValuePair<string, object?>>();
+                foreach (var key in s.Key)
+                    tags.Add(new (key.Key, key.Value));
+
+                tags.AddRange(additionalLabels);
+
+                return new Measurement<int>(s.Value, tags);
+            });
+    }
 }

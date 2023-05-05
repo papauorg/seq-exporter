@@ -43,7 +43,7 @@ public class SeqControlMeterTests
                 {CompositeMetricKey.FromKeyValue("Level", "Error"), 6},
             };
 
-            var result = SeqControlMeter.ToMeasurements(seqResults, "metric_test");
+            var result = SeqControlMeter.ToMeasurements(seqResults, new QueryDefinition { MetricName = "metric_test" });
 
             result.Should().HaveCount(3);
         }
