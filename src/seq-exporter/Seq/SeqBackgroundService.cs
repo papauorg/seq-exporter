@@ -35,20 +35,24 @@ public class SeqBackgroundService : BackgroundService
                 try
                 {
                     var result = await connection.Data.QueryAsync(queryDefinition.Query, signal: SignalExpressionPart.Signal(queryDefinition.Signal));
-
                     var convertedValues = ConvertValuePairs(result);
 
-                    foreach (var valuePair in convertedValues)
-                    {
-                        SeqObservableMetrics.MetricResults.AddOrUpdate(
-                            queryDefinition.MetricName,
-                            (_) => new Dictionary<CompositeMetricKey, int> { { valuePair.Key, valuePair.Value } },
-                            (_, d) =>
-                            {
-                                d[valuePair.Key!] = valuePair.Value;
-                                return d;
-                            });
-                    }
+                    SeqObservableMetrics.MetricResults.AddOrUpdate(
+                        queryDefinition.MetricName,
+                        (_) => convertedValues.ToDictionary(c => c.Key, c => c.Value),
+                        (_, d) =>
+                        {
+                            // set all counters to 0 to make sure that no longer available errors from the query are not reported with
+                            // their previous values
+                            foreach (var key in d.Keys)
+                                d[key] = 0;
+
+                            foreach (var newValue in convertedValues)
+                                d[newValue.Key] = newValue.Value;
+
+                            return d;
+                        }
+                    );
                 }
                 catch (Exception ex)
                 {
